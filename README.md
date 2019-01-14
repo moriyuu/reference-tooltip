@@ -31,6 +31,7 @@ npm i git+https://github.com/moriyuu/reference-tooltip
 [moriyuu/reference-tooltip-react-sample](https://github.com/moriyuu/reference-tooltip-react-sample)
 
 ```jsx
+import React from "react";
 import "reference-tooltip";
 
 function Component() {
