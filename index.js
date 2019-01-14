@@ -15,14 +15,17 @@ export default class ReferencedWord extends HTMLElement {
     render(this.template, this.shadowRoot);
   }
 
-  get template() {
-    const rwid = this.getAttribute("rwid");
-    const annotation = data.find(d => d.id === rwid).annotation;
+  connectedCallback() {
+    this.rwid = this.getAttribute("rwid");
+    this.annotation = (data.find(d => d.id === this.rwid) || {}).annotation;
+    render(this.template, this.shadowRoot);
+  }
 
+  get template() {
     return html`
       <span class="wrapper">
         <slot></slot>
-        <div class="tooltip">${annotation}</div>
+        <div class="tooltip">${this.annotation}</div>
       </span>
 
       <style>
