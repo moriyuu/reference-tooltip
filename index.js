@@ -8,72 +8,167 @@ const data = [
   }
 ];
 
+const RIGHT = "RIGHT";
+const LEFT = "LEFT";
+const TOP = "TOP";
+const BOTTOM = "BOTTOM";
+
+const tooltipWidth = 300;
+const tooltipDisappearDelayMs = 350;
+
 export default class ReferencedWord extends HTMLElement {
   constructor() {
     super();
+
+    this.arrowPosition = { x: LEFT, y: TOP };
+    this.tooltipPositionX = 0;
+    this.tooltipPositionY = 0;
+
     this.attachShadow({ mode: "open" });
     render(this.template, this.shadowRoot);
+
+    this.onMouseover = this.onMouseover.bind(this);
+    this.onMouseout = this.onMouseout.bind(this);
   }
 
   connectedCallback() {
     this.rwid = this.getAttribute("rwid");
-    this.annotation = (data.find(d => d.id === this.rwid) || {}).annotation;
+    this.annotation =
+      this.getAttribute("annotation") ||
+      (data.find(d => d.id === this.rwid) || {}).annotation;
     render(this.template, this.shadowRoot);
+  }
+
+  onMouseover(e) {
+    if (!this.isTooltipPositionLocked) {
+      this.tooltipPositionX = e.clientX;
+
+      const cursorPositionRateX = e.clientX / window.innerWidth;
+      const cursorPositionRateY = e.clientY / window.innerHeight;
+
+      if (cursorPositionRateX > 0.5) {
+        this.arrowPosition.x = RIGHT;
+      } else {
+        this.arrowPosition.x = LEFT;
+      }
+      if (cursorPositionRateY > 0.5) {
+        this.arrowPosition.y = BOTTOM;
+        this.tooltipPositionY = this.shadowRoot
+          .querySelector(".wrapper")
+          .getBoundingClientRect().top;
+      } else {
+        this.arrowPosition.y = TOP;
+        this.tooltipPositionY = this.shadowRoot
+          .querySelector(".wrapper")
+          .getBoundingClientRect().bottom;
+      }
+    }
+
+    setTimeout(() => {
+      this.isTooltipPositionLocked = true;
+    }, tooltipDisappearDelayMs);
+    render(this.template, this.shadowRoot);
+  }
+
+  onMouseout() {
+    setTimeout(() => {
+      this.isTooltipPositionLocked = false;
+      render(this.template, this.shadowRoot);
+    }, tooltipDisappearDelayMs);
   }
 
   get template() {
     return html`
-      <span class="wrapper">
+      <span
+        id="hoge"
+        class="wrapper"
+        @mouseover=${this.onMouseover}
+        @mouseout=${this.onMouseout}
+      >
         <slot></slot>
-        <div class="tooltip">${this.annotation}</div>
+        <div
+          class="tooltip"
+          @mouseover=${e => e.stopPropagation()}
+          @mouseout=${e => e.stopPropagation()}
+        >
+          ${this.annotation}
+        </div>
       </span>
 
       <style>
         .wrapper {
-          position: relative;
           color: blue;
           cursor: pointer;
         }
         .wrapper:hover .tooltip {
           opacity: 1;
           visibility: visible;
-          transition-delay: 0.3s;
+          transition-delay: 500ms;
         }
         .tooltip {
           opacity: 0;
           visibility: hidden;
           position: absolute;
-          top: 24px;
-          left: 0;
+          left: ${
+            this.arrowPosition.x === LEFT
+              ? `${this.tooltipPositionX - 24}px`
+              : "auto"
+          };
+          right: ${
+            this.arrowPosition.x === RIGHT
+              ? `${window.innerWidth - this.tooltipPositionX - 24}px`
+              : "auto"
+          };
+          top: ${
+            this.arrowPosition.y === TOP
+              ? `${this.tooltipPositionY + 8}px`
+              : "auto"
+          };
+          bottom: ${
+            this.arrowPosition.y === BOTTOM
+              ? `${window.innerHeight - this.tooltipPositionY + 8}px`
+              : "auto"
+          };
           background-color: #f5f5f5;
           color: #444;
-          width: 300px;
+          width: ${tooltipWidth}px;
           padding: 16px 24px;
           border-radius: 3px;
           font-size: 14px;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 6px rgba(0, 0, 0, 0.2);
           z-index: 10;
-          transition: all 0.2s ease-out 0.05s;
+          transition: all 200ms ease-out ${tooltipDisappearDelayMs}ms;
+          transition-property: opacity, visibility;
         }
         .tooltip::before {
           content: "";
           position: absolute;
+          left: ${this.arrowPosition.x === LEFT ? "16px" : "auto"};
+          right: ${this.arrowPosition.x === RIGHT ? "16px" : "auto"};
+          top: ${this.arrowPosition.y === TOP ? "-8px" : "auto"};
+          bottom: ${this.arrowPosition.y === BOTTOM ? "-8px" : "auto"};
+          margin-left: -8px;
           border-left: 8px solid transparent;
           border-right: 8px solid transparent;
-          top: -8px;
-          left: 16px;
-          margin-left: -8px;
-          border-bottom: 8px solid #ccc;
+          border-top: ${this.arrowPosition.y === BOTTOM ? "8px" : "0px"} solid
+            #ccc;
+          border-bottom: ${this.arrowPosition.y === TOP ? "8px" : "0px"} solid
+            #ccc;
         }
         .tooltip::after {
           content: "";
           position: absolute;
+          left: ${this.arrowPosition.x === LEFT ? "16px" : "auto"};
+          right: ${this.arrowPosition.x === RIGHT ? "16px" : "auto"};
+          top: ${this.arrowPosition.y === TOP ? "-7px" : "auto"};
+          bottom: ${this.arrowPosition.y === BOTTOM ? "-7px" : "auto"};
+          margin-left: -8px;
           border-left: 8px solid transparent;
           border-right: 8px solid transparent;
-          top: -7px;
-          left: 16px;
-          margin-left: -8px;
-          border-bottom: 8px solid #f5f5f5;
+          border-top: ${this.arrowPosition.y === BOTTOM ? "8px" : "0px"} solid
+            #f5f5f5;
+          border-bottom: ${this.arrowPosition.y === TOP ? "8px" : "0px"} solid
+            #f5f5f5;
         }
       </style>
     `;
