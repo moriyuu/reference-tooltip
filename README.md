@@ -1,9 +1,9 @@
-# @moriyuu/reference-tooltip
+# reference-tooltip
 
 ## installation
 
 ```bash
-yarn add @moriyuu/reference-tooltip
+yarn add git+https://github.com/moriyuu/reference-tooltip
 # or
-npm i @moriyuu/reference-tooltip
+npm i git+https://github.com/moriyuu/reference-tooltip
 ```
