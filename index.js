@@ -27,9 +27,9 @@ class ReferencedWord extends HTMLElement {
 
   connectedCallback() {
     this.rwid = this.getAttribute("rwid");
-    this.annotation =
-      this.getAttribute("annotation") ||
-      (data.find(d => d.id === this.rwid) || {}).annotation;
+    this.content =
+      this.getAttribute("content") ||
+      (data.find(d => d.id === this.rwid) || {}).content;
     render(this.template, this.shadowRoot);
   }
 
@@ -83,7 +83,7 @@ class ReferencedWord extends HTMLElement {
           @mouseover=${e => e.stopPropagation()}
           @mouseout=${e => e.stopPropagation()}
         >
-          ${this.annotation}
+          ${this.content}
         </div>
       </span>
 
