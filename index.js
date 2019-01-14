@@ -33,12 +33,13 @@ export default class ReferencedWord extends HTMLElement {
     this.arrowPosition = { x: LEFT, y: TOP };
     this.tooltipPositionX = 0;
     this.tooltipPositionY = 0;
-
-    this.attachShadow({ mode: "open" });
-    render(this.template, this.shadowRoot);
+    this.isTooltipPositionLocked = false;
 
     this.onMouseover = this.onMouseover.bind(this);
     this.onMouseout = this.onMouseout.bind(this);
+
+    this.attachShadow({ mode: "open" });
+    render(this.template, this.shadowRoot);
   }
 
   connectedCallback() {
@@ -53,30 +54,28 @@ export default class ReferencedWord extends HTMLElement {
     if (!this.isTooltipPositionLocked) {
       this.tooltipPositionX = e.clientX;
 
-      const cursorPositionRateX = e.clientX / window.innerWidth;
-      const cursorPositionRateY = e.clientY / window.innerHeight;
+      const boundingClientRect = this.shadowRoot
+        .querySelector(".wrapper")
+        .getBoundingClientRect();
 
-      if (cursorPositionRateX > 0.5) {
+      if (e.clientX / window.innerWidth > 0.5) {
         this.arrowPosition.x = RIGHT;
       } else {
         this.arrowPosition.x = LEFT;
       }
-      if (cursorPositionRateY > 0.5) {
+      if (e.clientY / window.innerHeight > 0.5) {
         this.arrowPosition.y = BOTTOM;
-        this.tooltipPositionY = this.shadowRoot
-          .querySelector(".wrapper")
-          .getBoundingClientRect().top;
+        this.tooltipPositionY = boundingClientRect.top + window.pageYOffset;
       } else {
         this.arrowPosition.y = TOP;
-        this.tooltipPositionY = this.shadowRoot
-          .querySelector(".wrapper")
-          .getBoundingClientRect().bottom;
+        this.tooltipPositionY = boundingClientRect.bottom + window.pageYOffset;
       }
     }
 
     setTimeout(() => {
       this.isTooltipPositionLocked = true;
     }, tooltipDisappearDelayMs);
+
     render(this.template, this.shadowRoot);
   }
 
