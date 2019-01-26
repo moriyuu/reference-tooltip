@@ -45,6 +45,8 @@ function Component() {
 
 ## TODO
 
+- [ ] inject dictionary
+- [ ] available HTML element in content
 - [ ] rich animation
 - [ ] arbitrary style and animation params
 - [ ] publish to npm
