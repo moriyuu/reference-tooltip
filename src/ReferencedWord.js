@@ -1,5 +1,5 @@
 import { html, render } from "lit-html";
-import data from "./reference.json";
+import dictionary from "./Dictionary";
 
 const RIGHT = "RIGHT";
 const LEFT = "LEFT";
@@ -29,7 +29,7 @@ class ReferencedWord extends HTMLElement {
     this.rwid = this.getAttribute("rwid");
     this.content =
       this.getAttribute("content") ||
-      (data.find(d => d.id === this.rwid) || {}).content;
+      (dictionary.list.find(d => d.id === this.rwid) || {}).content;
     render(this.template, this.shadowRoot);
   }
 
