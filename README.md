@@ -45,7 +45,7 @@ function Component() {
 
 ## TODO
 
-- [ ] inject dictionary
+- [x] inject dictionary
 - [ ] available HTML element in content
 - [ ] rich animation
 - [ ] arbitrary style and animation params
