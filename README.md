@@ -19,7 +19,7 @@ npm i git+https://github.com/moriyuu/reference-tooltip
 ```html
 <body>
     <p>
-        I love <referenced-word rwid="los_angeles" content="Los Angeles, officially the City of Los Angeles and known colloquially by its initials LA, is the most populous city in California and the second most populous city in the United States, after New York City. With an estimated population of four million, Los Angeles is the cultural, financial, and commercial center of Southern California. Nicknamed the \"City of Angels\" partly because of its name's Spanish meaning, Los Angeles is known for its Mediterranean climate, ethnic diversity, Hollywood and the entertainment industry, and sprawling metropolis.">sushi</referenced-word>.
+        I love <referenced-word rwid="los_angeles" content="Los Angeles is the most populous city in California and the second most populous city in the United States, after New York City.">sushi</referenced-word>.
     </p>
 </body>
 ```
