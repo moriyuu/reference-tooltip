@@ -1,8 +1,12 @@
 {
   "name": "reference-tooltip",
   "version": "0.1.0",
+  "description": "",
+  "main": "lib/index.js",
   "scripts": {
-    "dev": "parcel index.html"
+    "test": "",
+    "dev": "parcel src/index.js --out-dir lib",
+    "build": "parcel build src/index.js --out-dir lib"
   },
   "author": "moriyuu",
   "license": "MIT",
